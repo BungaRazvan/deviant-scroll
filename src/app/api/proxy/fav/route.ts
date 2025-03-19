@@ -1,12 +1,13 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust the path
+import { authOptions } from "@/lib/utils";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
 
   const session = await getServerSession(authOptions);
 
-  const access_token = session.accessToken;
+  // @ts-ignore
+  const access_token = session.accessToken!;
   const deviationid = searchParams.get("id");
 
   try {

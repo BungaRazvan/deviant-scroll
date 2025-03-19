@@ -6,6 +6,9 @@ import { Heart } from "lucide-react";
 
 interface ArtworkProps {
   accessToken: string;
+  folder?: string;
+  deviantUser: string;
+  startOffset?: number;
 }
 
 const Artwork: React.FC<ArtworkProps> = (props) => {
@@ -132,6 +135,7 @@ const Artwork: React.FC<ArtworkProps> = (props) => {
     <div className="min-h-screen  text-white p-4">
       <div className="grid gap-5">
         {items.map((item, index) => (
+          // @ts-ignore
           <div key={item.deviantionid}>
             <div
               ref={(el) => {
@@ -157,12 +161,15 @@ const Artwork: React.FC<ArtworkProps> = (props) => {
               )}
 
               <img
+                // @ts-ignore
                 src={item.content.src}
                 className="w-full h-auto object-cover transition-opacity duration-500 opacity-0"
                 onLoad={(e) => {
+                  // @ts-ignore
                   e.target.style.opacity = 1;
                 }}
                 onError={(e) => {
+                  // @ts-ignore
                   console.error("Image failed to load:", e.target.src);
                   console.log(item);
                   console.log(e);

@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust the path
+import { authOptions } from "@/lib/utils";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -8,6 +8,8 @@ export async function GET(req: Request) {
 
   const username = searchParams.get("username");
   const offset = searchParams.get("offset");
+
+  // @ts-ignore
   const access_token = session.accessToken;
 
   try {

@@ -57,6 +57,7 @@ export default function Home() {
 
             {deviantUser && (
               <Galery
+                // @ts-ignore
                 accessToken={session.accessToken}
                 deviantUser={deviantUser}
               />
