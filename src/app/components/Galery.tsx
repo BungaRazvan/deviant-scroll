@@ -41,22 +41,49 @@ const Galery = (props) => {
     fetchItems();
   }, [accessToken]);
 
+  const fetchGallery = async (offset) => {
+    return fetch(`/api/proxy?username=${deviantUser}&offset=${offset}`);
+  };
+
   const fetchItems = async () => {
-    const response = await fetch(
-      `/api/proxy?username=${deviantUser}&offset=${offset}`
-    );
-    const data = await response.json();
-    const results = data.results || [];
-    setItems(results);
-    setOffset(data.next_offset);
+    const galleries = [];
+    let ioffset = 0;
+
+    while (ioffset != null) {
+      const response = await fetchGallery(ioffset);
+      const data = await response.json();
+      const results = data.results || [];
+
+      const access = results
+        .map((result) => {
+          if (
+            result.premium_folder_data &&
+            result.premium_folder_data.has_access
+          ) {
+            return result;
+          }
+
+          if (!result.premium_folder_data) {
+            return result;
+          }
+        })
+        .filter(Boolean);
+      ioffset = data.next_offset;
+      galleries.push(...access);
+    }
+
+    setItems(galleries);
+    setOffset(ioffset);
   };
 
   const onClick = (item) => {
     setDisplayAll(false);
 
     if (item.has_subfolders) {
-      setSubFolders(item.subfolders);
-      setFilteredSubFolders(item.subfolders);
+      const fSubfolderd = item.subfolders.filter((f) => f.thumb);
+
+      setSubFolders(fSubfolderd);
+      setFilteredSubFolders(fSubfolderd);
       return;
     }
 

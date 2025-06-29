@@ -136,7 +136,7 @@ const Artwork: React.FC<ArtworkProps> = (props) => {
       <div className="grid gap-5">
         {items.map((item, index) => (
           // @ts-ignore
-          <div key={item.deviantionid}>
+          <div key={item.deviationid}>
             <div
               ref={(el) => {
                 imageRefs.current[index] = el;
