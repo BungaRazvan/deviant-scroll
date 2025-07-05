@@ -157,7 +157,7 @@ const Galery = (props) => {
                 <CarouselItem
                   onClick={() => setFolder(item.folderid)}
                   key={item.folderid}
-                  className={`basis-1/3 cursor-pointer ${
+                  className={`basis-1/4 cursor-pointer pt-2 pm-2 ${
                     folder === item.folderid
                       ? "border-4 border-blue-500 shadowsm rounded-sm"
                       : ""
