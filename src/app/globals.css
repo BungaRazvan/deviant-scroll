@@ -114,16 +114,21 @@
   }
 }
 
+body {
+  background-color: #131516 !important;
+  color: #e2dfdb !important;
+}
+
 .btn-arrow-down {
-  height: 40vh;
-  cursor: url(https://s.pximg.net/www/js/build/2adcf241fc4f9571.cur) 9 15,
-    url(https://s.pximg.net/www/js/build/2adcf241fc4f9571.cur), pointer;
-  top: calc(100% - 40vh);
+  height: 10vh;
+  cursor: url("/2adcf241fc4f9571.cur") 9 15, url("/2adcf241fc4f9571.cur"),
+    pointer;
+  top: calc(100% - 10vh);
 }
 
 .btn-arrow-up {
   top: 0px;
-  height: 20vh;
-  cursor: url(https://s.pximg.net/www/js/build/231ff4a8eccd5ebd.cur) 9 0,
-    url(https://s.pximg.net/www/js/build/231ff4a8eccd5ebd.cur), pointer;
+  height: 10vh;
+  cursor: url("/231ff4a8eccd5ebd.cur") 9 0, url("/231ff4a8eccd5ebd.cur"),
+    pointer;
 }

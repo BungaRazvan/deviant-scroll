@@ -49,7 +49,7 @@ export default function Home() {
             <button></button>
 
             <Input
-              className="m-5"
+              className="m-5 text-white"
               placeholder="Type user"
               value={query}
               onChange={handleChange}

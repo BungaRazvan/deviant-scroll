@@ -27,7 +27,7 @@ export async function GET(req: Request) {
     });
 
     if (!response.ok) {
-      return new Response(JSON.stringify(response.json()), {
+      return new Response(JSON.stringify({ error: "Failed to fetch data" }), {
         status: response.status,
       });
     }
@@ -35,6 +35,7 @@ export async function GET(req: Request) {
     const data = await response.json();
     return new Response(JSON.stringify(data), { status: 200 });
   } catch (error) {
+    console.log(error);
     return new Response(JSON.stringify(error), {
       status: 500,
     });

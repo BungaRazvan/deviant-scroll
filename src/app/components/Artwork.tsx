@@ -23,7 +23,7 @@ const Artwork: React.FC<ArtworkProps> = (props) => {
   >([]);
   const loader = useRef(null);
 
-  const [offset, setOffset] = useState(startOffset || 0);
+  const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -31,13 +31,17 @@ const Artwork: React.FC<ArtworkProps> = (props) => {
 
   const imageRefs = useRef([]);
   const lastImageRef = useRef(null);
+  const fetchInProgress = useRef(false);
 
   const favArt = async (item) => {
     fetch(`/api/proxy/fav?id=${item.deviationid}`);
   };
 
   const fetchItems = async (reset, startOffset = null) => {
-    const _offset = startOffset || offset;
+    if (fetchInProgress.current) return;
+    fetchInProgress.current = true;
+
+    const _offset = startOffset != null ? startOffset : offset;
     const response = await fetch(
       `/api/proxy/folder?offset=${_offset}&folder=${folder}&username=${deviantUser}`
     );
@@ -52,21 +56,26 @@ const Artwork: React.FC<ArtworkProps> = (props) => {
       setItems((prevItems) => [...prevItems, ...results]);
     }
 
-    if (!startOffset) {
-      setOffset(data.next_offset);
-      setHasMore(data.has_more);
-    }
+    setOffset(data.next_offset);
+    setHasMore(data.has_more);
+
+    fetchInProgress.current = false;
   };
 
   useEffect(() => {
     if (startOffset) {
-      setHasMore(true);
+      setItems([]);
+      setImageIndex(0);
       fetchItems(true, startOffset);
     }
   }, [startOffset]);
 
   useEffect(() => {
-    fetchItems(true);
+    setItems([]);
+    setOffset(0);
+    setImageIndex(0);
+    fetchItems(true, 0);
+    scrollToImage(0);
   }, [folder]);
 
   useEffect(() => {
@@ -103,6 +112,27 @@ const Artwork: React.FC<ArtworkProps> = (props) => {
     return () => observer.disconnect();
   }, [hasMore, offset]);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.find((entry) => entry.isIntersecting);
+        if (visible) {
+          const index = Number(visible.target.getAttribute("data-index"));
+          setImageIndex(index + 1);
+        }
+      },
+      {
+        threshold: 1,
+      }
+    );
+
+    imageRefs.current.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, [items]);
+
   const scrollToImage = (index) => {
     imageRefs.current[index]?.scrollIntoView({
       behavior: "smooth",
@@ -131,6 +161,16 @@ const Artwork: React.FC<ArtworkProps> = (props) => {
     }
   };
 
+  const handleFullscreen = (element: any) => {
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if ((element as any).webkitRequestFullscreen) {
+      (element as any).webkitRequestFullscreen(); // Safari
+    } else if ((element as any).msRequestFullscreen) {
+      (element as any).msRequestFullscreen(); // IE11
+    }
+  };
+
   return (
     <div className="min-h-screen  text-white p-4">
       <div className="grid gap-5">
@@ -144,6 +184,7 @@ const Artwork: React.FC<ArtworkProps> = (props) => {
                   lastImageRef.current = el;
                 }
               }}
+              data-index={index}
               className="relative rounded-lg overflow-hidden shadow-lg"
             >
               <button
@@ -174,6 +215,7 @@ const Artwork: React.FC<ArtworkProps> = (props) => {
                   console.log(item);
                   console.log(e);
                 }}
+                // onClick={(e) => handleFullscreen(e.target)}
                 loading="lazy"
               />
 
@@ -203,7 +245,7 @@ const Artwork: React.FC<ArtworkProps> = (props) => {
         </span>
       )}
 
-      {hasMore && (
+      {hasMore && fetchInProgress && (
         <div ref={loader} className="flex justify-center p-4 text-gray-400">
           <LoadingSpinner />
         </div>

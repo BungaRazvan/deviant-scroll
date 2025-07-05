@@ -157,14 +157,18 @@ const Galery = (props) => {
                 <CarouselItem
                   onClick={() => setFolder(item.folderid)}
                   key={item.folderid}
-                  className="basis-1/3"
+                  className={`basis-1/3 cursor-pointer ${
+                    folder === item.folderid
+                      ? "border-4 border-blue-500 shadowsm rounded-sm"
+                      : ""
+                  }`}
                 >
                   <div className="items-center flex flex-col">
                     <img
                       src={item.thumb?.content?.src}
                       className="h-[125px] object-cover"
                     />
-                    <span className="text-1xl font-bold text-center  text-clip">
+                    <span className="text-1xl   font-bold text-center  text-clip">
                       {item.name}
                     </span>
                   </div>
@@ -181,6 +185,7 @@ const Galery = (props) => {
         <>
           <Input
             type="number"
+            placeholder="Offset"
             onBlur={(e) => setStartOffset(Number(e.target.value))}
           />
           <Artwork
