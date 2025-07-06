@@ -57,7 +57,7 @@ export const authOptions: AuthOptions = {
               token_type: data.token_type,
               refresh_token: data.refresh_token,
               scope: data.scope,
-              expires_at: currentTime.getTime() + data.expires_in,
+              expires_at: currentTime.getTime() + data.expires_in * 1000,
             },
           };
         },
@@ -101,8 +101,12 @@ export const authOptions: AuthOptions = {
       }
 
       // Check if the token is expired
-      // @ts-ignore
-      if (!account && Date.now() > token.expiresAt) {
+      if (
+        !account &&
+        token.expiresAt &&
+        // @ts-ignore
+        Date.now() > token.expiresAt - 60_000
+      ) {
         try {
           const client_id = process.env.DEVIANTART_CLIENT_ID!;
           const client_secret = process.env.DEVIANTART_CLIENT_SECRET!;
